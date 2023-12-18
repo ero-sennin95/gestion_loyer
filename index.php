@@ -14,7 +14,7 @@ session_start();
     <title>Login</title>
 </head>
 <body>
-<h1>Root index</h1>
+<h1>Root index bis</h1>
 
 
 </body>
