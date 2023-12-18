@@ -1,5 +1,5 @@
 <?php 
-//  echo la dauphin dirname(__DIR__) ;
+//  echo dirname(__DIR__) ;
 //  require  dirname(__DIR__) . '/vendor/autoload.php';
 
  $title = "locataires";

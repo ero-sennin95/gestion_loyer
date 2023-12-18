@@ -31,7 +31,8 @@ if($currentPage > $pages){
 }
 $offset = $perPage * ($currentPage - 1);
 
-$contrats = $lman->findAllPaginated($perPage,$offset);
+//$contrats = $lman->findAllPaginated($perPage,$offset);
+$contrats = $lman->findAllContratJoin($perPage,$offset);
 if(!$contrats){
   throw new exception("No contract available", 1);
 }
@@ -59,8 +60,8 @@ if(!$contrats){
 foreach($contrats as $contrat): ?>
     <tr>
       <td><?=$contrat->getId_contrat_loc() ?></td>
-      <td><?=htmlentities($contrat->getId_bien()) ?></td>
-      <td><?=htmlentities($contrat->getId_locataire()) ?></td>
+      <td><?=htmlentities("Bail d'habitation vide") ?></td>  <! -- Ajouter type de bail -->  
+      <td><?=htmlentities($contrat->getFullName() ) ?></td>
       <td><?=htmlentities($contrat->getLoyer_mensuel()) ?></td>
       <td><?=htmlentities($contrat->getCaution()) ?></td>
       <td><?=htmlentities($contrat->getDate_entree()) ?></td>

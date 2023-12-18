@@ -13,6 +13,10 @@ class Contrat{
     private $notes;
     private $id_locataire;
     private $id_bien;
+    // Foreign keys
+    private $nom;
+    private $prenom;
+
 
     /**
      * Get the value of id_contrat_loc
@@ -212,5 +216,50 @@ class Contrat{
         $this->date_entree = $date_entree;
 
         return $this;
+    }
+
+    /**
+     * Get the value of nom
+     */ 
+    public function getNom()
+    {
+        return $this->nom;
+    }
+
+    /**
+     * Set the value of nom
+     *
+     * @return  self
+     */ 
+    public function setNom($nom)
+    {
+        $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of prenom
+     */ 
+    public function getPrenom()
+    {
+        return $this->prenom;
+    }
+
+    /**
+     * Set the value of prenom
+     *
+     * @return  self
+     */ 
+    public function setPrenom($prenom)
+    {
+        $this->prenom = $prenom;
+
+        return $this;
+    }
+
+    public function getFullName()
+    {
+        return $this->getNom().' '  . $this->getPrenom();
     }
 }

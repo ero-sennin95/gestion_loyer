@@ -25,6 +25,19 @@ class ContratManager{
       $query->setFetchMode(PDO::FETCH_CLASS,Contrat::class);
       return $query->fetch();
   }
+
+
+  public function findAllContratJoin($perPage,$offset)
+  {
+   $query = $this->bdd->query("SELECT cl.id_contrat_loc,cl.prov_charges,cl.loyer_mensuel,cl.caution,cl.jour_versement,cl.date_entree,cl.fin_bail,cl.notes,
+                               l.nom,l.prenom
+                               FROM contrat_location AS cl
+                               INNER JOIN locataire AS l
+                               ON cl.id_locataire = l.id_locataire
+                               ORDER BY id_contrat_loc DESC LIMIT $perPage OFFSET $offset;"
+                               );
+        return $query->fetchAll(PDO::FETCH_CLASS,Contrat::class);
+   }
      public function count()
      {
         $query = $this->bdd->query("SELECT COUNT(id_contrat_loc) FROM contrat_location");
