@@ -16,7 +16,7 @@ if(isset($_GET['page'] ) && $_GET['page']==='1'){
     if(!empty($query)){
        $uri =  $uri . '?' . $query;
     }
-    var_dump($uri);
+   // var_dump($uri);
      header('Location: ' . $uri);
      http_response_code(301);
      exit() ;
@@ -43,6 +43,18 @@ $router->map('GET', '/locataire/[i:id]', function($id) use ( $router) {
     require VIEW_PATH. '/locataires/details.php';
 
 } , 'locataire_details');
+
+$router->map('GET | POST', '/locataire/edit/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/locataires/edit.php';
+
+} , 'locataire_edit');
+
+$router->map('POST ', '/locataire/delete/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/locataires/delete.php';
+
+} , 'locataire_delete');
 
 $router->map('GET','/contrats',function() use ($router){
     require VIEW_PATH . '/contrats/index.php';

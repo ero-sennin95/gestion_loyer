@@ -25,13 +25,15 @@ if($create === 1){
             email VARCHAR(30),
             profession VARCHAR(30),
             date_naissance DATE,
-            apl BOOL, allocation VARCHAR(15),
+            apl BOOL,
+            allocation VARCHAR(15),
             PRIMARY KEY (id_locataire)) ENGINE=InnoDB;";
 
 
         $tableContrat = "CREATE TABLE Contrat_location (
             id_contrat_loc INT AUTO_INCREMENT NOT NULL,
-            prov_charges DOUBLE, loyer_mensuel DOUBLE,
+            prov_charges DOUBLE,
+             loyer_mensuel DOUBLE,
             caution DOUBLE,
             jour_versement INT,
             date_entree DATE,

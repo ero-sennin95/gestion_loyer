@@ -32,4 +32,27 @@ class LocataireManager{
          return $query->fetch(PDO::FETCH_NUM)[0];
       }
 
+      public function update(Locataire $locataire)
+      {
+         $query_str = "UPDATE locataire set nom = :name WHERE id_locataire = :id ";
+         $query = $this->bdd->prepare($query_str);
+         $ok = $query->execute(['id' => $locataire->getId_locataire(),
+                              'name' => $locataire->getNom()]);
+        if($ok === false){
+            throw new \Exception("Impossible de mettre à jour l'enregistrement {$locataire->getId_locataire()} ", 1);
+            
+        }
+         return $query->fetch();
+      }
+      public function delete(int $id)
+      {
+         $query_str = "DELETE locataire  WHERE id_locataire = ? ";
+         $query = $this->bdd->prepare($query_str);
+         $ok = $query->execute([$id]);
+        if($ok === false){
+            throw new \Exception("Impossible de supprimer l'enregistrement {$id} ", 1);
+            
+        }
+         return $query->fetch();
+      }
 }

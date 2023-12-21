@@ -17,10 +17,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link active" aria-current="page" href="#">Accueil</a>
+          <a class="nav-link active" aria-current="page" href="<?= $router->generate('contrats_index')?>">Contrat</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Locataires</a>
+          <a class="nav-link" href="<?= $router->generate('locataires_index')?>">Locataires</a>
         </li>
         <li class="nav-item">
           <a class="nav-link disabled" aria-disabled="true">Disabled</a>

@@ -31,9 +31,16 @@ if($currentPage > $pages){
 }
 $offset = $perPage * ($currentPage - 1);
 $locataires = $lman->findAllPaginated($perPage,$offset);
- var_dump($currentPage);
+ //var_dump($currentPage);
 // exit;
 ?>
+
+<?php if(isset($_GET['delete'])): ?>
+  <div class="alert alert-success mt-4">
+      L'enregistrement a bien été supprimé
+  </div>
+<?php endif; ?>
+
 <h1>Locataires</h1>
 <table class="table">
 <thead>
@@ -56,8 +63,13 @@ foreach($locataires as $locataire): ?>
       <td><?=htmlentities($locataire->getPrenom()) ?></td>
       <td><?=htmlentities($locataire->getEmail()) ?></td>
       <td><?=htmlentities($locataire->getDate_naissance()) ?></td>
-      <td><a class="btn btn-primary" href="<?= $router->generate('locataire_details', ['id' => $locataire->getId_locataire()]) ?>">Voir</a></td>
-
+      <td><a class="btn btn-primary" href="<?= $router->generate('locataire_details', ['id' => $locataire->getId_locataire()]) ?>">Voir</a>
+          <a class="btn btn-success" href="<?= $router->generate('locataire_edit', ['id' => $locataire->getId_locataire()]) ?>">Editer</a>
+          <form method="POST"  style="display:inline"action="<?= $router->generate('locataire_delete', ['id' => $locataire->getId_locataire()]) ?>" 
+              onsubmit="return confirm('Voulez vous vraiment effectuer cette action?')">
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+          </form>
+      </td>
     </tr>
 <?php endforeach ?>
   </tbody>
@@ -72,7 +84,7 @@ foreach($locataires as $locataire): ?>
       <a class="btn btn-primary"href="<?=$link?>">&laquo; Page précédente</a>
     <?php endif?>
     <?php if($currentPage < $pages):?>
-      <a class="btn btn-primary ms-auto"href="<?=$router->generate('locataires_index')?>?page=<?=$currentPage + 1?>">Page suivante &raquo;</a>
+      <a class="btn btn-primary ms-auto" href="<?=$router->generate('locataires_index')?>?page=<?=$currentPage + 1?>">Page suivante &raquo;</a>
     <?php endif?>
   </div>
 
