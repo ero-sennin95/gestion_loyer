@@ -7,7 +7,7 @@ $pdo = App\Connection::getPDO();
 $manager = new App\Model\LocataireManager();
 var_dump($id);
 var_dump($params);
-//$manager->delete($id); TODO check constraint to null
+$manager->delete($id);// TODO check constraint to null
 header('Location: ' . $router->generate('locataires_index') . '?delete=1')
 
 ?>

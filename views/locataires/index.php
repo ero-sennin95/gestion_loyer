@@ -3,6 +3,8 @@
 //  require  dirname(__DIR__) . '/vendor/autoload.php';
 
  $title = "locataires";
+ $menuPages = "locataires";
+App\Auth::check();
 
 $pdo = App\Connection::getPDO();
 $lman = new \App\Model\LocataireManager();
@@ -25,13 +27,16 @@ if($currentPage <= 0){
 
 $count = (int)$lman->count();
 $perPage = 12;
-$pages = ceil($count / $perPage) ;
-if($currentPage > $pages){
-  throw new Exception("Page doesn't exist", 1);
+if($count>0){
+  $pages = ceil($count / $perPage) ;
+  if($currentPage > $pages){
+    throw new Exception("Page doesn't exist", 1);
+  }
+  $offset = $perPage * ($currentPage - 1);
+  $locataires = $lman->findAllPaginated($perPage,$offset);
 }
-$offset = $perPage * ($currentPage - 1);
-$locataires = $lman->findAllPaginated($perPage,$offset);
- //var_dump($currentPage);
+
+ dump($locataires);
 // exit;
 ?>
 
@@ -41,7 +46,9 @@ $locataires = $lman->findAllPaginated($perPage,$offset);
   </div>
 <?php endif; ?>
 
-<h1>Locataires</h1>
+
+<?php if($count>0):?>
+
 <table class="table">
 <thead>
     <tr>
@@ -50,19 +57,20 @@ $locataires = $lman->findAllPaginated($perPage,$offset);
       <th scope="col">Prenom</th>
       <th scope="col">email</th>
       <th scope="col">Date de naissance</th>
-      <th scope="col">Action</th>
+      <th scope="col"><a class="btn btn-primary mt-3" href="<?= $router->generate('locataire_create') ?>">Ajouter</a></th>
     </tr>
   </thead>
 
 <tbody>
 <?php
+
 foreach($locataires as $locataire): ?>
     <tr>
       <th scope="row"><?=$locataire->getId_locataire() ?></th>
       <td><?=htmlentities($locataire->getNom()) ?></td>
       <td><?=htmlentities($locataire->getPrenom()) ?></td>
       <td><?=htmlentities($locataire->getEmail()) ?></td>
-      <td><?=htmlentities($locataire->getDate_naissance()) ?></td>
+      <td><?=($locataire->getDate_naissance()) ?></td>
       <td><a class="btn btn-primary" href="<?= $router->generate('locataire_details', ['id' => $locataire->getId_locataire()]) ?>">Voir</a>
           <a class="btn btn-success" href="<?= $router->generate('locataire_edit', ['id' => $locataire->getId_locataire()]) ?>">Editer</a>
           <form method="POST"  style="display:inline"action="<?= $router->generate('locataire_delete', ['id' => $locataire->getId_locataire()]) ?>" 
@@ -88,3 +96,9 @@ foreach($locataires as $locataire): ?>
     <?php endif?>
   </div>
 
+  <?php else : ?>
+    <h2>Veuillez créer un nouveau client <a class="btn btn-primary mt-3" href="<?= $router->generate('locataire_create') ?>">Ajouter</a> </h2>
+    
+    
+
+<?php endif ?>

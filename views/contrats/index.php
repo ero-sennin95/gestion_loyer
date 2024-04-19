@@ -3,6 +3,8 @@
 //  require  dirname(__DIR__) . '/vendor/autoload.php';
 
  $title = "Contrats";
+ //dump($menuPages);
+ $menuPages = "contrats";
 
 $pdo = App\Connection::getPDO();
 $lman = new \App\Model\ContratManager();
@@ -24,23 +26,25 @@ if($currentPage <= 0){
 }
 
 $count = (int)$lman->count();
+
 $perPage = 12;
 $pages = ceil($count / $perPage) ;
-if($currentPage > $pages){
+if($currentPage > $pages && $count!=0){
   throw new Exception("Page doesn't exist", 1);
 }
 $offset = $perPage * ($currentPage - 1);
 
 //$contrats = $lman->findAllPaginated($perPage,$offset);
 $contrats = $lman->findAllContratJoin($perPage,$offset);
-if(!$contrats){
+if(!$contrats && $count!=0){
   throw new exception("No contract available", 1);
 }
 
- var_dump($currentPage);
+ //var_dump($currentPage);
 // exit;
 ?>
-<h1>Contrats</h1>
+
+
 <table class="table">
 <thead>
     <tr>
@@ -50,7 +54,7 @@ if(!$contrats){
       <th scope="col">Loyer</th>
       <th scope="col">Depot</th>
       <th scope="col">Durée</th>
-      <th scope="col">Action</th>
+      <th scope="col"><a class="btn btn-primary mt-3" href="<?= $router->generate('contrat_create') ?>">Ajouter</a></th>
 
     </tr>
   </thead>
@@ -66,7 +70,15 @@ foreach($contrats as $contrat): ?>
       <td><?=htmlentities($contrat->getCaution()) ?></td>
       <td><?=htmlentities($contrat->getDate_entree()) ?></td>
       
-      <td><a class="btn btn-primary" href="">Voir</a></td>
+      
+      <td>
+        <a class="btn btn-primary" href="">Voir</a>
+        <a class="btn btn-success" href="<?= $router->generate('contrat_edit', ['id' => $contrat->getId_contrat_loc()]) ?>">Editer</a>
+        <form method="POST"  style="display:inline"action="<?= $router->generate('contrat_delete', ['id' => $contrat->getId_contrat_loc()]) ?>" 
+              onsubmit="return confirm('Voulez vous vraiment effectuer cette action?')">
+                <button type="submit" class="btn btn-danger">Supprimer</button>
+          </form>
+    </td>
 
     </tr>
 <?php endforeach ?>
