@@ -3,17 +3,21 @@
  require  dirname(__DIR__) . '/vendor/autoload.php';
     echo  dirname(__DIR__) ;
  $pdo = App\Connection::getPDO();
-
+ echo("init");
 $create= 1;
 $dropTableLoc = "DROP TABLE IF EXISTS Locataire ; ";
 $dropTableContrat = "DROP TABLE IF EXISTS Contrat_location" ; 
 $dropTableBiens = "DROP TABLE IF EXISTS Biens" ;
 $dropTableFactures = "DROP TABLE IF EXISTS Facture" ;
 $dropTableReglement = "DROP TABLE IF EXISTS Reglement" ;
+$dropTableLigne_fact = "DROP TABLE IF EXISTS ligne_fact";
+$dropTableLigne_regl = "DROP TABLE IF EXISTS ligne_regl";
+$dropTablePayeur = "DROP TABLE IF EXISTS payeur";
 $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
 
-
+echo("drop");
 if($create === 1){
+    dump("create");
         $tableLoc = "CREATE TABLE Locataire (
             id_locataire INT AUTO_INCREMENT NOT NULL,
             codeLoc VARCHAR(10),
@@ -43,6 +47,7 @@ if($create === 1){
 
 
         $tableBiens = "CREATE TABLE Biens (id_bien INT AUTO_INCREMENT NOT NULL,
+                        nom VARCHAR(20),
                         type_Biens VARCHAR(20),
                         adresse1 VARCHAR(40),
                         adresse2 VARCHAR(40),
@@ -53,45 +58,72 @@ if($create === 1){
                         PRIMARY KEY (id_bien)) ENGINE=InnoDB;";
         
         $tableFactures = "CREATE TABLE Facture (id_facture INT AUTO_INCREMENT NOT NULL,
-                                                mois INT,
-                                                annee INT,
                                                 date_emission DATE,
                                                 montant DOUBLE,
-                                                moisannee DATE,
                                                 id_contrat_loc INT,
                                                 PRIMARY KEY (id_facture)) ENGINE=InnoDB; ";
 
         $tableReglement = "CREATE TABLE Reglement (id_reglement INT AUTO_INCREMENT NOT NULL,
-                                                date DATE,
-                                                montant DOUBLE,
+                                                id_payeur INT,
                                                 id_facture INT,
                                                 PRIMARY KEY (id_reglement)) ENGINE=InnoDB;";
 
+        $tableLigneFacture ="CREATE TABLE ligne_fact (id_ligne INT AUTO_INCREMENT NOT NULL,
+                                                    montant DOUBLE, 
+                                                    tva DOUBLE,
+                                                    type VARCHAR(16),
+                                                    description VARCHAR(128),
+                                                    id_facture INT,
+                                                    PRIMARY KEY (id_ligne)) ENGINE=InnoDB;";
 
+        $tableLigneReglement = "CREATE TABLE ligne_regl (id_ligne INT AUTO_INCREMENT NOT NULL,
+                                                    montant INT,
+                                                    date DATE,
+                                                    description VARCHAR(256),
+                                                    id_reglement INT,
+                                                     PRIMARY KEY (id_ligne)) ENGINE=InnoDB; ";
+        
+        $tablePayeur = "CREATE TABLE payeur (id_payeur INT AUTO_INCREMENT NOT NULL,
+                                             nom VARCHAR(32),
+                                             PRIMARY KEY (id_payeur_payeur)) ENGINE=InnoDB";
         $pdo->exec($dropTableContrat);
         $pdo->exec($dropTableLoc);
         $pdo->exec($dropTableFactures);
         $pdo->exec($dropTableBiens);
         $pdo->exec($dropTableReglement);
+        $pdo->exec($dropTableLigne_fact);
+        $pdo->exec($dropTableLigne_regl);
+        $pdo->exec($dropTablePayeur);
+
 
         $pdo->exec($tableContrat);
         $pdo->exec($tableLoc);
         $pdo->exec($tableFactures);
         $pdo->exec($tableBiens);
         $pdo->exec($tableReglement);
-
+        $pdo->exec($tableLigneFacture);
+        $pdo->exec($tableLigneReglement);
+        $pdo->exec($tablePayeur);
 
         $alterContrat = "ALTER TABLE Contrat_location ADD CONSTRAINT FK_Contrat_location_id_locataire FOREIGN KEY (id_locataire) REFERENCES Locataire (id_locataire)";
         $alterContrat02 = "ALTER TABLE Contrat_location ADD CONSTRAINT FK_Contrat_location_biens_id_bien_biens FOREIGN KEY (id_bien) REFERENCES Biens (id_bien)";
         $alterBiens = "ALTER TABLE Biens ADD CONSTRAINT FK_Biens_id_contrat_loc FOREIGN KEY (id_contrat_loc) REFERENCES Contrat_location (id_contrat_loc)";
         $alterFactures ="ALTER TABLE Facture ADD CONSTRAINT FK_Facture_id_contrat_loc FOREIGN KEY (id_contrat_loc) REFERENCES Contrat_location (id_contrat_loc)";
         $alterReglements = "ALTER TABLE Reglement ADD CONSTRAINT FK_Reglement_id_facture FOREIGN KEY (id_facture) REFERENCES Facture (id_facture)";
-
+        $alterReglements02 ="ALTER TABLE Reglement ADD CONSTRAINT FK_Reglement_payeur_id_payeur_payeur FOREIGN KEY (id_payeur) REFERENCES payeur (id_payeur);";
+        $alterLigneFact ="ALTER TABLE ligne_fact ADD CONSTRAINT FK_ligne_fact_id_facture FOREIGN KEY (id_facture) REFERENCES Facture (id_facture);";
+        $alterLigneRegl = "ALTER TABLE ligne_regl ADD CONSTRAINT FK_ligne_regl_id_reglement FOREIGN KEY (id_reglement) REFERENCES Reglement (id_reglement);";
+        
+        
         $pdo->exec($alterContrat);
         $pdo->exec($alterContrat02);
         $pdo->exec($alterBiens);
         $pdo->exec($alterFactures);
         $pdo->exec($alterReglements);
+        $pdo->exec($alterReglements02);
+        $pdo->exec($alterLigneFact);
+        $pdo->exec($alterLigneRegl);
+        
 
         $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
 
@@ -133,8 +165,9 @@ $typeDeBiens = ['Appartement','Maison','Garage'];
 //    VALUES ('{$faker->randomElement($typeDeBiens)}','{$faker->address()}','{$faker->streetAddress()}','{$faker->city()}','{$faker->postcode()}','{$faker->text()}','{$faker->randomElement($locatairesId)}')";
 // echo $sqlBiens;
 for($i = 0 ;$i<10;$i++){
-   $pdo->exec("INSERT INTO Biens(type_Biens,adresse1,adresse2,ville,cp,description,id_contrat_loc)
-   VALUES ('{$faker->randomElement($typeDeBiens)}',
+   $pdo->exec("INSERT INTO Biens(nom,type_Biens,adresse1,adresse2,ville,cp,description,id_contrat_loc)
+   VALUES ('{$faker->domainName()}',
+            '{$faker->randomElement($typeDeBiens)}',
             '{$faker->address()}',
             '{$faker->streetAddress()}',
             '{$faker->city()}',
@@ -176,5 +209,8 @@ for($i = 0 ;$i<20;$i++){
             '{$faker->randomElement($biensId)}')");
 
 }
+
+$password = password_hash('admin',PASSWORD_BCRYPT);
+$pdo->exec("INSERT INTO users SET username='admin' ,user_password='$password' ");
 
 $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');

@@ -31,14 +31,16 @@ session_start();
 $pdo = App\Connection::getPDO();
 
 $router = new AltoRouter();
+$title='';
+$menuPages = '';
 
 $router->map('GET','/',function() use ($router){
-    require VIEW_PATH. '/locataires/index.php'; // a changé par dashboard
-},'home');
-$router->map('GET','/locataires',function() use ($router) {
+    require VIEW_PATH. '/dashboard/index.php'; // a changé par dashboard
+},'dashboard');
+$router->map('GET','/locataires',function() use ($router,&$menuPages) {
     require VIEW_PATH. '/locataires/index.php';
 },'locataires_index');
-$router->map('GET', '/locataire/[i:id]', function($id) use ( $router) {
+$router->map('GET', '/locataire/[i:id]', function($id) use ($router) {
     $params = ($router->match()['params']);
     require VIEW_PATH. '/locataires/details.php';
 
@@ -56,36 +58,131 @@ $router->map('POST ', '/locataire/delete/[i:id]', function($id) use ( $router) {
 
 } , 'locataire_delete');
 
-$router->map('GET','/contrats',function() use ($router){
-    require VIEW_PATH . '/contrats/index.php';
+$router->map('POST |GET ', '/locataire/create', function() use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/locataires/create.php';
+} , 'locataire_create');
+
+
+$router->map('GET','/contrats',function() use ($router,&$menuPages){
+   $menuPages = 'contrat';
+   require VIEW_PATH . '/contrats/index.php';
 },'contrats_index');
 
 $router->map('GET','/contrat/[i:id]',function($id){
     require VIEW_PATH . '/contrats/details.php';
 },'contrat_details');
-// $router->map( 'GET', '/locataire/[i:id]/', 'UserController#showDetails' );
 
+$router->map('GET | POST', '/contrat/edit/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/contrats/edit.php';
+
+} , 'contrat_edit');
+
+$router->map('GET | POST', '/contrat/create', function() use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/contrats/create.php';
+
+} , 'contrat_create');
+
+$router->map('POST ', '/contrats/delete/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/contrats/delete.php';
+
+} , 'contrat_delete');
+
+// $router->map( 'GET', '/locataire/[i:id]/', 'UserController#showDetails' );
+$router->map('GET | POST','/auth/login',function(){
+    require VIEW_PATH . '/auth/login.php';
+},'auth_login');
+
+
+
+$router->map('GET','/biens',function() use ($router,&$menuPages) {
+    require VIEW_PATH. '/biens/index.php';
+},'biens_index');
+
+$router->map('GET | POST', '/bien/edit/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/biens/edit.php';
+
+} , 'bien_edit');
+
+$router->map('GET | POST', '/bien/create', function() use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/biens/create.php';
+
+} , 'bien_create');
+$router->map('POST ', '/bien/delete/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/biens/delete.php';
+
+} , 'bien_delete');
+
+$router->map('GET','/finances',function() use ($router,&$menuPages) {
+    require VIEW_PATH. '/finances/index.php';
+},'finances_index');
+
+$router->map('GET | POST', '/finance/edit/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/finances/edit.php';
+
+} , 'finance_edit');
+
+$router->map('GET | POST', '/finance/create', function() use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/finances/create.php';
+
+} , 'finance_create');
+
+//Id : the id of the reglement to delette
+//rId : the facture Id
+$router->map('POST | GET ', '/finance/delete/[i:id]/[i:factId]?', function($id,$factId=-1) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/finances/delete.php';
+
+} , 'finance_delete');
+
+$router->map('GET | POST', '/finance/create_payment/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/finances/create_payment.php';
+
+} , 'finance_create_payment');
+
+$router->map('GET | POST', '/finance/list_payment/[i:id]', function($id,$delId=-1) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/finances/list_payment.php';
+
+} , 'finance_list_payment');
+
+// $router->map('GET|POST', '/finance/list_payment/[i:id]/[i:delId]', function($id,$delId) use($router) {
+//     $params = ($router->match()['params']);
+//     require VIEW_PATH. '/finances/list_payment.php';
+//   }, 'user-details');
 
 $match = $router->match();
-// var_dump($match);
+
+// dd($match);
 ob_start();
+
 
 // call closure or throw 404 status
 if( is_array($match) && is_callable( $match['target'] ) ) {
 	call_user_func_array( $match['target'], $match['params'] );
+    $content = ob_get_clean();
+    require VIEW_PATH . DIRECTORY_SEPARATOR . 'layouts/defaut.php';
    
 } else {
 	// no route was matched
-	header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
+	echo '404';
+    //header( $_SERVER["SERVER_PROTOCOL"] . ' 404 Not Found');
 }
 
 function show($id){
 }
 
 //$match['target']();
-$content = ob_get_clean();
 
-require VIEW_PATH . DIRECTORY_SEPARATOR . 'layouts/defaut.php';
 
 ?>
 
