@@ -18,7 +18,20 @@ class Locataire{
 
 
     
-
+    public function __construct() {
+         $this->id_locataire = -1;
+         $this->codeLoc = -1;	
+         $this->civilite= "";	
+         $this->nom="";	
+         $this->prenom="";	
+         $this->fixe="";
+         $this->portable="";	
+         $this->email="";		
+         $this->profession="";
+         $this->date_naissance="";
+         $this->apl="";
+         $this->allocation="";
+    }
 
     /**
      * Get the value of profession
@@ -259,4 +272,10 @@ class Locataire{
 
         return $this;
     }
+
+    public function getFullName()
+    {
+        return $this->nom . ' ' . $this->prenom;
+    }
+
 }

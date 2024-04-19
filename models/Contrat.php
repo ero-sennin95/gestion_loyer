@@ -2,14 +2,17 @@
 
 namespace App\Model;
 
+use DateTime;
+
 class Contrat{
     private $id_contrat_loc;
+    private $nameId;    //Must be set in database request cf contrats/create.php
     private $prov_charges;
     private $loyer_mensuel;
     private $caution;
     private $jour_versement;
     private $date_entree;
-    private $fin_bail;
+    private $duree_bail;
     private $notes;
     private $id_locataire;
     private $id_bien;
@@ -17,7 +20,20 @@ class Contrat{
     private $nom;
     private $prenom;
 
-
+    public function __construct() {
+        $this->nameId = "";
+        $this->id_contrat_loc = -1;
+        $this->prov_charges = 0;
+        $this->loyer_mensuel = 0;	
+        $this->caution= 0;	
+        $this->jour_versement=0;	
+        $this->date_entree=date("Y-m-d");	
+        $this->duree_bail=0;
+        $this->notes="";	
+        $this->id_locataire=-1;		
+        $this->id_bien=-1;
+       
+   }
     /**
      * Get the value of id_contrat_loc
      */ 
@@ -99,21 +115,21 @@ class Contrat{
     }
 
     /**
-     * Get the value of fin_bail
+     * Get the value of duree_bail
      */ 
-    public function getFin_bail()
+    public function getDuree_bail()
     {
-        return $this->fin_bail;
+        return $this->duree_bail;
     }
 
     /**
-     * Set the value of fin_bail
+     * Set the value of duree_bail
      *
      * @return  self
      */ 
-    public function setFin_bail($fin_bail)
+    public function setDuree_bail($duree_bail)
     {
-        $this->fin_bail = $fin_bail;
+        $this->duree_bail = $duree_bail;
 
         return $this;
     }
@@ -261,5 +277,25 @@ class Contrat{
     public function getFullName()
     {
         return $this->getNom().' '  . $this->getPrenom();
+    }
+
+    /**
+     * Get the value of nameId
+     */ 
+    public function getNameId()
+    {
+        return $this->nameId;
+    }
+
+    /**
+     * Set the value of nameId
+     *
+     * @return  self
+     */ 
+    public function setNameId($nameId)
+    {
+        $this->nameId = $nameId;
+
+        return $this;
     }
 }
