@@ -3,19 +3,22 @@ namespace App\Model;
 
 class Reglement{
     
-    private $id_reglement;
-    private $date;
-    private $montant;
+    private $id_ligne_regl;
+    private $date_regl;
+    private $montant_regl;
+    private $description_regl;
     private $id_facture;
     private $id_payeur;
+    
     private $total_credit;
 
 
     public function __construct(){
-         $this->id_reglement = -1;
-         $this->date = date('Y-m-d');
-         $this->montant =0;
+         $this->id_ligne_regl = -1;
+         $this->date_regl = date('Y-m-d');
+         $this->montant_regl =0;
         $this->id_payeur = -1;
+        $this->description_regl= "";
          //Foreign key
          $this->id_facture=-1;
     
@@ -23,21 +26,21 @@ class Reglement{
 
 
     /**
-     * Get the value of date
+     * Get the value of date_regl
      */ 
-    public function getDate()
+    public function getDateReglement()
     {
-        return $this->date;
+        return $this->date_regl;
     }
 
     /**
-     * Set the value of date
+     * Set the value of date_regl
      *
      * @return  self
      */ 
-    public function setDate($date)
+    public function setDateReglement($date_regl)
     {
-        $this->date = $date;
+        $this->date_regl = $date_regl;
 
         return $this;
     }
@@ -45,9 +48,9 @@ class Reglement{
     /**
      * Get the value of montat
      */ 
-    public function getMontant()
+    public function getMontantRegl()
     {
-        return $this->montant;
+        return $this->montant_regl;
     }
 
     /**
@@ -55,9 +58,9 @@ class Reglement{
      *
      * @return  self
      */ 
-    public function setMontant($montat)
+    public function setMontantRegl($montat)
     {
-        $this->montant = $montat;
+        $this->montant_regl = $montat;
 
         return $this;
     }
@@ -83,21 +86,21 @@ class Reglement{
     }
 
     /**
-     * Get the value of id_reglement
+     * Get the value of id_ligne_regl
      */ 
     public function getIdReglement()
     {
-        return $this->id_reglement;
+        return $this->id_ligne_regl;
     }
 
     /**
-     * Set the value of id_reglement
+     * Set the value of id_ligne_regl
      *
      * @return  self
      */ 
-    public function setIdReglement($id_reglement)
+    public function setIdReglement($id_ligne_regl)
     {
-        $this->id_reglement = $id_reglement;
+        $this->id_ligne_regl = $id_ligne_regl;
 
         return $this;
     }
@@ -140,6 +143,26 @@ class Reglement{
     public function setid_payeur($id_payeur)
     {
         $this->id_payeur = $id_payeur;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of description_regl
+     */ 
+    public function getDescription_regl()
+    {
+        return $this->description_regl;
+    }
+
+    /**
+     * Set the value of description_regl
+     *
+     * @return  self
+     */ 
+    public function setDescription_regl($description_regl)
+    {
+        $this->description_regl = $description_regl;
 
         return $this;
     }

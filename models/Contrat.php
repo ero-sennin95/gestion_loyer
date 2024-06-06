@@ -6,7 +6,7 @@ use DateTime;
 
 class Contrat{
     private $id_contrat_loc;
-    private $nameId;    //Must be set in database request cf contrats/create.php
+    private $nameId;    //Must be set in database request cf contrats/create.php (Done)
     private $prov_charges;
     private $loyer_mensuel;
     private $caution;
@@ -19,9 +19,10 @@ class Contrat{
     // Foreign keys
     private $nom;
     private $prenom;
+    private $idFacture;
 
     public function __construct() {
-        $this->nameId = "";
+        $this->nameId = "CONT-";
         $this->id_contrat_loc = -1;
         $this->prov_charges = 0;
         $this->loyer_mensuel = 0;	
@@ -32,6 +33,7 @@ class Contrat{
         $this->notes="";	
         $this->id_locataire=-1;		
         $this->id_bien=-1;
+        $this->idFacture=-1;
        
    }
     /**

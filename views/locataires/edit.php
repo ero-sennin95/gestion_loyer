@@ -9,7 +9,6 @@ $manager = new App\Model\LocataireManager();
 $id = (int) $id;
 $selectedLoc = $manager->findLocataireById($id);
 $errors = [];
-var_dump($_POST);
 if(!empty($_POST)){
     Validator::lang('fr');
     $v = new Validator($_POST);
@@ -59,9 +58,7 @@ if(!empty($_POST)){
   </div>
 <?php endif?>
 
-<h1>Edit page <?= $selectedLoc->getNom()?></h1>
+<h2>Modifier le locataire : <?= $selectedLoc->getNom()?></h2>
 
 <?php require "_form.php" ?>
-
-    <button class="btn btn-primary mt-3">Modifier</button>
 </form>

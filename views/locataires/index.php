@@ -4,7 +4,7 @@
 
  $title = "locataires";
  $menuPages = "locataires";
-App\Auth::check();
+//App\Auth::check();
 
 $pdo = App\Connection::getPDO();
 $lman = new \App\Model\LocataireManager();
@@ -36,7 +36,7 @@ if($count>0){
   $locataires = $lman->findAllPaginated($perPage,$offset);
 }
 
- dump($locataires);
+//  dump($locataires);
 // exit;
 ?>
 
@@ -48,6 +48,15 @@ if($count>0){
 
 
 <?php if($count>0):?>
+ 
+    <?php if(!empty($_SESSION['flash']['message'])) :?>
+      <div class="alert alert-success mt-4">
+        <?php echo $_SESSION['flash']['message'] ;
+          unset($_SESSION['flash']['message']);
+        ?>
+      </div>
+
+    <?php endif?>
 
 <table class="table">
 <thead>
@@ -57,7 +66,7 @@ if($count>0){
       <th scope="col">Prenom</th>
       <th scope="col">email</th>
       <th scope="col">Date de naissance</th>
-      <th scope="col"><a class="btn btn-primary mt-3" href="<?= $router->generate('locataire_create') ?>">Ajouter</a></th>
+      <th scope="col"><a class="btn btn-primary btn-sm " href="<?= $router->generate('locataire_create') ?>">Ajouter</a></th>
     </tr>
   </thead>
 
@@ -71,11 +80,11 @@ foreach($locataires as $locataire): ?>
       <td><?=htmlentities($locataire->getPrenom()) ?></td>
       <td><?=htmlentities($locataire->getEmail()) ?></td>
       <td><?=($locataire->getDate_naissance()) ?></td>
-      <td><a class="btn btn-primary" href="<?= $router->generate('locataire_details', ['id' => $locataire->getId_locataire()]) ?>">Voir</a>
-          <a class="btn btn-success" href="<?= $router->generate('locataire_edit', ['id' => $locataire->getId_locataire()]) ?>">Editer</a>
+      <td><a class="btn btn-outline-success btn-sm " href="<?= $router->generate('locataire_details', ['id' => $locataire->getId_locataire()]) ?>">Voir</a>
+          <a class="btn btn-outline-warning btn-sm " href="<?= $router->generate('locataire_edit', ['id' => $locataire->getId_locataire()]) ?>">Editer</a>
           <form method="POST"  style="display:inline"action="<?= $router->generate('locataire_delete', ['id' => $locataire->getId_locataire()]) ?>" 
               onsubmit="return confirm('Voulez vous vraiment effectuer cette action?')">
-                <button type="submit" class="btn btn-danger">Supprimer</button>
+                <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
           </form>
       </td>
     </tr>

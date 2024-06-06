@@ -11,7 +11,7 @@ $manager = new App\Model\LocataireManager();
 $selectedLoc = new Locataire();
 //dd($selectedLoc);
 $errors = [];
-var_dump($_POST);
+// var_dump($_POST);
 if(!empty($_POST)){
     Validator::lang('fr');
     $v = new Validator($_POST);
@@ -21,6 +21,7 @@ if(!empty($_POST)){
         return !($manager->exist('nom',$_POST['lastname']));
     },"lastname")->message("Ce locataire existe déja"); 
     require "_rules.php" ;
+
     $selectedLoc->setNom($_POST['lastname'])
                 ->setPrenom($_POST['firstname'])
                 ->setEmail($_POST['eMail'])
@@ -31,6 +32,9 @@ if(!empty($_POST)){
     if($v->validate()){
         $manager->create($selectedLoc);
         $success = true;
+        $_SESSION['flash'] = ['message' => "Le locataire a bien été enregistré"];
+        header('Location: ' .$router->generate('locataires_index'));
+        exit();
     }else{
         $errors = ($v->errors());
     }
@@ -39,20 +43,14 @@ if(!empty($_POST)){
 }
 
 ?>
-<?php if($success) :?>
-    <div class="alert alert-success mt-4">
-      L'enregistrement a bien été enregistré
-  </div>
-<?php endif?>
+
 <?php if(!empty($errors)) :?>
     <div class="alert alert-danger mt-4">
-      L'enregistrement n'a pas été enregistré
+      Le locataire n'a pas été enregistré
   </div>
 <?php endif?>
-<h1>Create page </h1>
+<h2>Ajouter un locataire </h2>
 
 <?php require "_form.php" ?>
-
-
-    <button class="btn btn-primary mt-3">Ajouter</button>
+   
 </form>

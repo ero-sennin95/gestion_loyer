@@ -77,7 +77,7 @@ class Utils{
         return $debt - $cred;
     }
 
-    public static function getBalance_formatedStr(int $debt ,int $cred){
+    public static function getBalance_formatedStr(int $debt=0 ,int $cred=0){
         $solde = $debt - $cred;
         $str=''; // . $debt . '€';
         // <p class="text-primary">.text-primary</p>

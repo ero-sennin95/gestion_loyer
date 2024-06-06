@@ -4,6 +4,7 @@ namespace App\Model;
 
 class Biens{
 
+    private $prefix;
     private $id_bien;
     private $nom;
     private $type_Biens;
@@ -23,6 +24,7 @@ class Biens{
      public function __construct() {
         $this->id_bien = -1;
         $this->nom = "";
+        $this->prefix = "BIEN-";
         $this->type_Biens = "";	
         $this->adresse1= "";	
         $this->adresse2="";	
@@ -230,6 +232,26 @@ class Biens{
     public function setNom($nom)
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of prefix
+     */ 
+    public function getPrefix()
+    {
+        return $this->prefix;
+    }
+
+    /**
+     * Set the value of prefix
+     *
+     * @return  self
+     */ 
+    public function setPrefix($prefix)
+    {
+        $this->prefix = $prefix;
 
         return $this;
     }

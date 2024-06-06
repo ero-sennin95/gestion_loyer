@@ -1,11 +1,21 @@
 <?php
 //Autoload
-require_once  dirname(__DIR__) . '/vendor/autoload.php';
+require '../App/Auth.php';
+// use App\Auth;
+// dump(Auth::isConnected());
 
+require_once  dirname(__DIR__) . '/vendor/autoload.php';
+// require '../commands/bdd.php';
 //Active debug mode
+// $_SESSION['connected']=1;
+
+
+   
 $whoops = new \Whoops\Run;
 $whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 $whoops->register();
+
+
 //dd($_GET);
 if(isset($_GET['page'] ) && $_GET['page']==='1'){
     //Réécrire l'url sans le paramètre ?page
@@ -25,7 +35,7 @@ if(isset($_GET['page'] ) && $_GET['page']==='1'){
 define('DEBUG_TIME',microtime(true));
 define('VIEW_PATH',dirname(__DIR__) . '/views');
 
-session_start();
+
 //var_dump(dirname(__DIR__));
 
 $pdo = App\Connection::getPDO();
@@ -33,6 +43,7 @@ $pdo = App\Connection::getPDO();
 $router = new AltoRouter();
 $title='';
 $menuPages = '';
+
 
 $router->map('GET','/',function() use ($router){
     require VIEW_PATH. '/dashboard/index.php'; // a changé par dashboard
@@ -119,6 +130,8 @@ $router->map('POST ', '/bien/delete/[i:id]', function($id) use ( $router) {
 
 } , 'bien_delete');
 
+
+
 $router->map('GET','/finances',function() use ($router,&$menuPages) {
     require VIEW_PATH. '/finances/index.php';
 },'finances_index');
@@ -128,6 +141,15 @@ $router->map('GET | POST', '/finance/edit/[i:id]', function($id) use ( $router) 
     require VIEW_PATH. '/finances/edit.php';
 
 } , 'finance_edit');
+
+
+//Get the id of the edited payment
+$router->map(' GET | POST', '/finance/edit_payment/[i:id]', function($id) use ( $router) {
+    $params = ($router->match()['params']);
+    require VIEW_PATH. '/finances/edit_payment.php';
+
+} , 'finance_edit_payment');
+
 
 $router->map('GET | POST', '/finance/create', function() use ( $router) {
     $params = ($router->match()['params']);
@@ -155,6 +177,8 @@ $router->map('GET | POST', '/finance/list_payment/[i:id]', function($id,$delId=-
 
 } , 'finance_list_payment');
 
+
+
 // $router->map('GET|POST', '/finance/list_payment/[i:id]/[i:delId]', function($id,$delId) use($router) {
 //     $params = ($router->match()['params']);
 //     require VIEW_PATH. '/finances/list_payment.php';
@@ -162,7 +186,7 @@ $router->map('GET | POST', '/finance/list_payment/[i:id]', function($id,$delId=-
 
 $match = $router->match();
 
-// dd($match);
+dump($match);
 ob_start();
 
 

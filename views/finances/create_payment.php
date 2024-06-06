@@ -5,10 +5,12 @@ use App\Model\Reglement;
 use Valitron\Validator;
 
 $success = false;
-dump((int)$id);
+// dump((int)$id);
 $pdo = App\Connection::getPDO();
 $manager = new App\Model\ReglementManager;
-
+$reglement =  new Reglement();
+$allPayeur = $manager->findAllPayeur();
+// dump($allPayeur);
 $reglements = [
             'locataire' => new Reglement(),
             'aide' => new Reglement()
@@ -28,42 +30,25 @@ $reglements = [
 //dd($selectedLoc);
 
 $errors = [];
-var_dump($_POST);
+// var_dump($_POST);
 if(!empty($_POST)){
     Validator::lang('fr');
     $v = new Validator($_POST);
     // Disable prepending the labels
     //$v->setPrependLabels(false);
-        $reglements['locataire']->setDate($_POST['dateLocataireInput'])
-        ->setMontant($_POST['montant_loc_Input'])
-        ->setIdFacture($id);
+        $reglement->setDateReglement($_POST['datePaiementInput'])
+                    ->setMontantRegl($_POST['montant_Input'])
+                    ->setIdFacture($id)
+                    ->setid_payeur($_POST['payeur_select']);
 
-        $reglements['aide']->setDate($_POST['dateAideInput'])
-        ->setMontant($_POST['aideInput'])
-        ->setIdFacture($id);
 
-    if(empty($_POST['montant_loc_Input'])){
-                //unset($reglements['locataire']);
-            }
-
-          
-    if(empty($_POST['aide'])){
-       
-       // unset($reglements['locataire']);
-        //$reglements['aide'] = new Reglement();
-    }
-    dump($reglements);
+    // dump($reglements);
     if($v->validate()){
-        if(!empty($_POST['aideInput'])){
-            dump("On ajoute aide"); 
-            $manager->create( $reglements['aide']);
-        }
-        if(!empty($_POST['montant_loc_Input'])){
-            dump("On ajoute loyer"); 
-            $manager->create( $reglements['locataire']);
-        }
+        $manager->create( $reglement);
+     
         //$manager->create($currentReglement);
         $success = true;
+        header('Location: ' .$router->generate('finances_index'));
     }else{
         $errors = ($v->errors());
     }
@@ -87,45 +72,36 @@ if(!empty($_POST)){
 <form action="" method="post">
 
     
-     <div class="row">
-    <div class="col">
-            <label for="montant_loc_Input" class="form-label">Part locataire</label>
-            <input type="text" class="form-control" id="montant_loc_Input" name="montant_loc_Input" aria-describedby="montant_loc_help" value="<?=htmlentities($reglements['locataire']->getMontant()) ?>">
+    <div class="row">
+        <div class="col-md-3">
+            <label for="montant_Input" class="form-label">Paiement reçu</label>
+            <input type="text" class="form-control" id="montant_Input" name="montant_Input" aria-describedby="montant_help" value="<?=htmlentities($reglement->getMontantRegl()) ?>">
             <?php if(isset($errors['montant_loc'])):?>
                 <div class="invalid-feedback">
                     <?=implode('<br>',$errors['montant_loc'])?>
                 </div>
-        <?php endif ?>
+            <?php endif ?>
         </div>
-    <div class="col">
-            <label for="dateLocataireInput" class="form-label">Date de paiement</label>
-            <input type="date" class="form-control" id="dateLocataireInput" name="dateLocataireInput" aria-describedby="dateHelp" value="<?=htmlentities($reglements['locataire']->getDate()) ?>">
+        <div class="col-md-3">
+            <label for="payeur_select" class="form-label ">Payeur</label>
+            <select class="form-select" id="payeur_select"  name="payeur_select" aria-label="Default select example">
+                <!-- Mettre la valeur par defaut sous la forme ID_NOM pour la recuperer dans le POST -->
+               
+                <?php foreach($allPayeur as $payeur): ?>
+                    <option value="<?=$payeur->id_payeur ?>"><?=$payeur->nom_payeur ?></option>
+                <?php endforeach?>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <label for="datePaiementInput" class="form-label">Date de paiement</label>
+            <input type="date" class="form-control" id="datePaiementInput" name="datePaiementInput" aria-describedby="dateHelp" value="<?=htmlentities($reglement->getDateReglement()) ?>">
             <?php if(isset($errors['dateLoca'])):?>
                 <div class="invalid-feedback">
                     <?=implode('<br>',$errors['dateLoca'])?>
                 </div>
         <?php endif ?>
-    </div>
-    </div>
-    <div class="row">
-        <div class="col">
-            <label for="aideInput" class="form-label">Aide</label>
-            <input type="text" class="form-control" id="aideInput" name="aideInput"aria-describedby="aideHelp" value="<?=htmlentities($reglements['aide']->getMontant() ) ?>">
-            <?php if(isset($errors['aide'])):?>
-                    <div class="invalid-feedback">
-                        <?=implode('<br>',$errors['aide'])?>
-                    </div>
-            <?php endif ?>
-        </div>
-        <div class="col">
-                <label for="dateAideInput" class="form-label">Date de paiement</label>
-                <input type="date" class="form-control" id="dateAideInput" name="dateAideInput" aria-describedby="dateAideHelp" value="<?=htmlentities($reglements['aide']->getDate()) ?>">
-                <?php if(isset($errors['dateAide'])):?>
-                    <div class="invalid-feedback">
-                        <?=implode('<br>',$errors['dateAide'])?>
-                    </div>
-            <?php endif ?>
         </div>
     </div>
+    
     <button class="btn btn-primary mt-3">Ajouter</button>
 </form>

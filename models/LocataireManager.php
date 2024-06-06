@@ -69,6 +69,8 @@ class LocataireManager{
         $locataire->setId_locataire($this->bdd->lastInsertId());
          return $query->fetch();
       }
+
+      
       public function delete(int $id)
       {
          $query_str = "DELETE FROM locataire  WHERE id_locataire = ? ";

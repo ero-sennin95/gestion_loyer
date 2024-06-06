@@ -13,7 +13,7 @@ class BiensManager{
    
      public function findAll(){
         $query = $this->bdd->query("SELECT * FROM biens ");
-        return $query->fetchAll(PDO::FETCH_CLASS,Biens::class);
+        return $query->fetchAll(PDO::FETCH_CLASS| PDO::FETCH_PROPS_LATE,Biens::class);
      }
 
      public function findBienById(int $id){
@@ -24,23 +24,23 @@ class BiensManager{
   }
 
 
-     public function findAllContratJoin($perPage,$offset)
-  {
-   $query = $this->bdd->query("SELECT b.id_bien,b.nom,b.adresse1,b.id_contrat_loc ,b.type_Biens,b.ville,
+     public function findAllContratJoin($perPage,$offset) {
+             $query = $this->bdd->query("SELECT b.id_bien,b.nom,b.adresse1,b.id_contrat_loc ,b.type_Biens,b.ville,
                      cl.id_contrat_loc,cl.id_locataire,
                      loc.nom AS nom_loc,loc.prenom AS prenom_loc
                      FROM biens AS b
                      LEFT JOIN contrat_location AS cl
-                     ON b.id_contrat_loc = cl.id_contrat_loc
+                     ON b.id_bien = cl.id_bien
                      LEFT JOIN locataire AS loc	
                      ON cl.id_locataire=loc.id_locataire
+                     LIMIT $perPage OFFSET $offset
                              ");           //TODO FAUXXXXX pas id_contrat_loc
         return $query->fetchAll(PDO::FETCH_CLASS| PDO::FETCH_PROPS_LATE,Biens::class);
    }
 
    public function create(Biens $bien)
    {
-      $query_str = "INSERT INTO biens SET nom = :nom ,type_Biens = :type,adresse1 = :adresse1,adresse2 = :adresse2 ,ville = :ville,cp=:cp,description=:description ";
+       $query_str = "INSERT INTO biens SET nom = :nom ,type_Biens = :type,adresse1 = :adresse1,adresse2 = :adresse2 ,ville = :ville,cp=:cp,description=:description ";
       // $query_str = "UPDATE locataire set nom = :lastname ,prenom = :firstname,email = :mail WHERE id_locataire = :id ";
       $query = $this->bdd->prepare($query_str);
       $ok = $query->execute(['nom' => $bien->getNom(),
@@ -60,7 +60,7 @@ class BiensManager{
    }
    public function update(Biens $bien)
    {
-      //dd($locataire);
+      // dd($bien);
       $query_str = "UPDATE biens SET nom = :nom ,type_Biens = :type_Biens,adresse1 = :adresse1,adresse2 = :adresse2 ,ville = :ville,cp=:cp,description=:description WHERE id_bien = :id ";
       $query = $this->bdd->prepare($query_str);
       $ok = $query->execute([ 'id' => $bien->getId_bien(),
@@ -79,6 +79,25 @@ class BiensManager{
      //$bien->setId_bien($this->bdd->lastInsertId());
       return $query->fetch();
    }
+
+   public function updateLoc(int $idBien,int $idLoc)
+   {
+      dump('id bien: ' .$idBien,"id loc ".$idLoc);
+      $query_str = "UPDATE biens SET id_contrat_loc = :idLoc WHERE id_bien = :id ";
+   
+      $query = $this->bdd->prepare($query_str);
+      // dd($query->queryString);
+      $ok = $query->execute([ 'id' => $idBien,
+                              'idLoc' => $idLoc
+                        ]);
+     if($ok === false){
+         throw new \Exception("Impossible de mettre à jour l'enregistrement {$idBien} ", 1);
+         
+     }
+     //$bien->setId_bien($this->bdd->lastInsertId());
+      return $query->fetch();
+   }
+
    public function delete(int $id)
    {
       $query_str = "DELETE FROM biens  WHERE id_bien = ? ";
@@ -102,6 +121,7 @@ class BiensManager{
          
          $query_str =("SELECT COUNT(id_bien) FROM biens WHERE $field = ?");
          $params = [$value];
+         
          if($except != null){
            
            $query_str .= "AND id_bien != ? ";
@@ -110,13 +130,18 @@ class BiensManager{
          }
         
          $query=  $this->bdd->prepare("$query_str"); 
+         dump($query->queryString);
         //  dd($query->queryString);
          $query->execute($params);
-         //$value= 'Ramos';
-         //$query_str = $this->bdd->query("SELECT COUNT(id_locataire) FROM locataire WHERE nom = $value");
+         
           return (int)$query->fetch(PDO::FETCH_NUM)[0]>0;
          //$result = $query_str->fetch(PDO::FETCH_NUM)[0];  
          }
+
+         public function count(){
+            $query = $this->bdd->query("SELECT COUNT(id_bien) FROM biens");
+              return $query->fetch(PDO::FETCH_NUM)[0];
+           }
 
          
 }

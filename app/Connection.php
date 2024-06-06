@@ -14,3 +14,8 @@ class Connection {
 
     }
 }
+
+
+// tremblinluovhdb.mysql.db	
+// PDO('mysql:dbname=gestionloyer;host=127.0.0.1','root','root',[
+    //PDO('mysql:dbname=tremblinluovhdb;host=tremblinluovhdb.mysql.db','tremblinluovhdb',

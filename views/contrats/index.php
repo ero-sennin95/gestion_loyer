@@ -8,6 +8,9 @@
 
 $pdo = App\Connection::getPDO();
 $lman = new \App\Model\ContratManager();
+$biensManager = new \App\Model\BiensManager();
+// $biensManager->updateLoc(1,9);
+
 /** @var array Contrat|false */
 
 $page = $_GET['page'] ?? 1;
@@ -20,6 +23,7 @@ if(!filter_var($page,FILTER_VALIDATE_INT)){
 //   http_response_code(301);
 //   exit();
 // }
+
 $currentPage =(int) $page;
 if($currentPage <= 0){
   throw new Exception("Invalid page number", 1);
@@ -40,12 +44,24 @@ if(!$contrats && $count!=0){
   throw new exception("No contract available", 1);
 }
 
+// dump($_SESSION);
+
  //var_dump($currentPage);
 // exit;
 ?>
 
+<?php if(!empty($_SESSION['flash']['message'])) :?>
+    <div class="alert alert-success mt-4">
+      <?php echo $_SESSION['flash']['message'] ;
+      unset($_SESSION['flash']['message']);
+      ?>
+  </div>
 
-<table class="table">
+<?php endif?>
+
+
+
+<table class="table mt-3">
 <thead>
     <tr>
       <th scope="col">Bien</th>
@@ -54,7 +70,7 @@ if(!$contrats && $count!=0){
       <th scope="col">Loyer</th>
       <th scope="col">Depot</th>
       <th scope="col">Durée</th>
-      <th scope="col"><a class="btn btn-primary mt-3" href="<?= $router->generate('contrat_create') ?>">Ajouter</a></th>
+      <th scope="col"><a class="btn btn-primary btn-sm " href="<?= $router->generate('contrat_create') ?>">Ajouter</a></th>
 
     </tr>
   </thead>
@@ -72,11 +88,11 @@ foreach($contrats as $contrat): ?>
       
       
       <td>
-        <a class="btn btn-primary" href="">Voir</a>
-        <a class="btn btn-success" href="<?= $router->generate('contrat_edit', ['id' => $contrat->getId_contrat_loc()]) ?>">Editer</a>
-        <form method="POST"  style="display:inline"action="<?= $router->generate('contrat_delete', ['id' => $contrat->getId_contrat_loc()]) ?>" 
+        <a class="btn btn-outline-success btn-sm " href="">Voir</a>
+        <a class="btn btn-outline-warning btn-sm" href="<?= $router->generate('contrat_edit', ['id' => $contrat->getId_contrat_loc()]) ?>">Editer</a>
+        <form method="POST"  style="display:inline" action="<?= $router->generate('contrat_delete', ['id' => $contrat->getId_contrat_loc()]) ?>" 
               onsubmit="return confirm('Voulez vous vraiment effectuer cette action?')">
-                <button type="submit" class="btn btn-danger">Supprimer</button>
+                <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
           </form>
     </td>
 
